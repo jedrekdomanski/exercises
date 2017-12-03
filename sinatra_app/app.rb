@@ -1,57 +1,7 @@
 require 'sinatra'
 require 'json'
-
-# class variables return warning: class variable access from toplevel. I used class methods instead
-
-class Db
-  def self.initialize
-    @@cars = []
-  end
-
-  def self.create(car)
-    @@cars << car
-  end
-
-  def self.find(id)
-    @@cars.detect { |car| car.id == id }
-  end
-
-  def self.get_cars
-    @@cars
-  end
-end
-
-configure do
-  Db.initialize
-end
-
-before do
-  content_type 'application/json'
-end
-
-class Car
-  attr_reader :id, :make, :name, :year
-
-  def initialize(id:, make:, name:, year:)
-    @id   = id
-    @make = make
-    @name = name
-    @year = year
-  end
-
-  def to_h
-    {
-     id: id,
-     make: make,
-     name: name,
-     year: year
-    }
-  end
-
-  def to_json
-    to_h.to_json
-  end
-end
+require_relative 'db'
+require_relative 'car'
 
 get '/cars' do
   cars = Db.get_cars
@@ -71,8 +21,6 @@ post '/cars' do
   Db.create(car)
   status 201
 end
-
-
 
 # Usage:
 # ruby app.rb
