@@ -1,4 +1,5 @@
 require 'rspec'
+require 'byebug'
 require_relative '../lib/my_own_active_record'
 
 class User < MyOwnActiveRecord
@@ -10,8 +11,8 @@ class User < MyOwnActiveRecord
   end
 
   validates :email, :phone, presence: true
+  validates :phone, length: { is: 9 }
 end
-
 
 describe "Validation" do
   context "Invalid user" do
@@ -21,16 +22,26 @@ describe "Validation" do
       expect(user.save).to eq(false)
     end
 
-    it "returns the correct errors messages" do
+    it "returns the correct error messages when attributes are not given" do
       user.save
-      expect(user.errors.full_messages).to eq(["Email can't be blank", "Phone can't be blank"])
+      expect(user.errors.full_messages).to eq(
+        ["Email can't be blank",
+         "Phone can't be blank",
+         "Phone is the wrong length (should be 9) characters"
+        ])
+    end
+
+    it "returns the correct error messages when phone number is not the right length" do
+      user = User.new(email: "test@tes.com", phone: 12345)
+      user.save
+      expect(user.errors.full_messages).to eq(["Phone is the wrong length (should be 9) characters"])
     end
   end
 
   context "Valid user" do
-    let(:user) { User.new(email: "test@test123.com", phone: 123456789) }
+    let(:user) { User.new(email: "abc@1.com", phone: 123456789) }
    
-    it "is valid with email or phone number " do
+    it "is valid with email or phone number" do
       expect(user.save).to eq(true)
     end
 

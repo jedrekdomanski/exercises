@@ -4,7 +4,7 @@ class PresenceValidator
     @attributes = attributes
   end
   def call(object)
-    attributes.each do |attribute|
+    attributes[0..-2].each do |attribute|
       value = object.send(attribute)
       object.errors.add(attribute.to_s, "can't be blank") if value.nil?
     end

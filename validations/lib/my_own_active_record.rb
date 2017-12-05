@@ -1,6 +1,7 @@
 require_relative 'error'
 require_relative 'errors'
 require_relative 'presence_validator'
+require_relative 'length_validator'
 
 class MyOwnActiveRecord
   attr_reader :errors
@@ -36,7 +37,7 @@ class MyOwnActiveRecord
   private
 
   def self.extract_validator_class!(attributes)
-    validator_param = attributes.pop
+    validator_param = attributes.last
     validator_type = validator_param.keys.first.to_s
     validator_class_name = "#{validator_type.capitalize}Validator"
     Object.const_get(validator_class_name)
